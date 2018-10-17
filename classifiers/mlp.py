@@ -24,21 +24,21 @@ class Classifier_MLP:
 
         reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor='loss',
                                       factor=0.5,
-                                      patience=100,
-                                      verbose=True,
+                                      patience=10,
+                                      verbose=False,
                                      min_delta=0.0001,
                                      cooldown=3,
-                                     min_lr=0.01)
-        early = keras.callbacks.EarlyStopping(monitor='loss',min_delta=0,patience=100,verbose=False)
+                                     min_lr=0)
+        early = keras.callbacks.EarlyStopping(monitor='loss',min_delta=0,patience=50,verbose=False)
         
-        self.callbacks =[reduce_lr]
+        self.callbacks =[reduce_lr,early]
         
         return model
                                  
     def fit(self,x_train,y_train,x_test,y_test,nb_epochs=1000):
          batch_size = min(int(x_train.shape[0]/10),16)
             
-         h =self.model.fit(x_train,y_train,batch_size=batch_size,epochs=nb_epochs,verbose=True,
+         h =self.model.fit(x_train,y_train,batch_size=batch_size,epochs=nb_epochs,verbose=False,
                         validation_split=0.2,callbacks=self.callbacks)
          return h
                                  

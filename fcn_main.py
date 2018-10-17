@@ -4,7 +4,7 @@ import os
 from utils.utils import train_test_splitUCR,preprocessing
 import send_email as s
 import csv
-
+import datetime
 
 fdir='data/ucr/'
 flist = [os.path.join(fdir, o) for o in os.listdir(fdir) 
@@ -17,19 +17,22 @@ csvfile = open('fcn.csv', 'w')
 filewriter = csv.writer(csvfile, delimiter=',',
                         quotechar='|', quoting=csv.QUOTE_MINIMAL)
 filewriter.writerow(['Name', 'Acc1','Acc2','Acc3','Acc4','Acc5','Acc6','Acc7','Acc8','Acc9','Acc10','Avg'])
-
 flist.sort()
-flist=flist[:25]
-flist=['Gun_Point']
+flist = flist[76:]
+print(flist)
+exit()
 for fname in flist:
     scores=[]
+    x_train , x_test, y_train, y_test = train_test_splitUCR(fdir,fname)
+    f=open("Eye.txt","a")
+    a = datetime.datetime.now()
+    f.write("\n"+str(i)+" "+fname+ " " + str(a) +"\n")
+    nb_classes = len(np.unique(y_test))
+    x_train , x_test, y_train, y_test = preprocessing(x_train , x_test, y_train, y_test)
+    x_train = x_train.reshape(x_train.shape +(1,))
+    x_test = x_test.reshape(x_test.shape + (1,))
+    input_shape = x_train.shape[1:]
     for i in range(10):
-        x_train , x_test, y_train, y_test = train_test_splitUCR(fdir,fname)
-        nb_classes = len(np.unique(y_test))
-        x_train , x_test, y_train, y_test = preprocessing(x_train , x_test, y_train, y_test)
-        x_train = x_train.reshape(x_train.shape + (1,))
-        x_test = x_test.reshape(x_test.shape + (1,))
-        input_shape=x_train.shape[1:]
         c =Classifier_FCN(input_shape,nb_classes)
         print("\n[" +fname+"]Treinando a rede ",i+1,"° vez")
         hist = c.fit(x_train,y_train,x_test,y_test)
@@ -42,8 +45,12 @@ for fname in flist:
 
     avg = round(sum(scores)/len(scores),2)
     print(avg)
+    f.write("AVG Acc %.2f%%:"%(avg))
+    f.write("\n")
+    f.close()
+    i=i+1
     filewriter.writerow([fname]+scores+[avg])
 csvfile.close()
 
-nameNetwork='mlp'
-##s.sendemail("clemilton.ufam@gmail.com","Treino "+nameNetwork,"Terminou!!")
+nameNetwork='fcn'
+s.sendemail("clemilton.ufam@gmail.com","Treino "+nameNetwork,"Terminou!!")

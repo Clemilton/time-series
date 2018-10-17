@@ -28,13 +28,13 @@ class Classifier_FCN:
 
         model.compile(loss='categorical_crossentropy', optimizer = keras.optimizers.Adam(), 
             metrics=['accuracy'])
-        reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor='val_loss',
+        reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor='loss',
                              factor=0.5,
                              patience=10,
-                             verbose=1,
+                             verbose=0,
                              mode='auto',
                              min_delta=0.0001, cooldown=3, min_lr=0) 
-        early = keras.callbacks.EarlyStopping(monitor='val_loss',min_delta=0,patience=30,verbose=0)
+        early = keras.callbacks.EarlyStopping(monitor='loss',min_delta=0,patience=50,verbose=0)
 
 
         self.callbacks = [reduce_lr,early]
@@ -44,7 +44,7 @@ class Classifier_FCN:
     def fit(self,x_train,y_train,x_test,y_test,nb_epochs=1000):
          batch_size = min(int(x_train.shape[0]/10),16)
             
-         h =self.model.fit(x_train,y_train,batch_size=batch_size,epochs=nb_epochs,verbose=False,
+         h =self.model.fit(x_train,y_train,batch_size=batch_size,epochs=nb_epochs,verbose=0,
                         validation_split=0.2,callbacks=self.callbacks)
          return h
                                  
