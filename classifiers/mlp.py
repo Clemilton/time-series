@@ -2,18 +2,19 @@ import keras
 
 class Classifier_MLP:
     
-    def __init__(self,input_shape,nb_classes):
-        self.model = self.build_model(input_shape,nb_classes)
+    def __init__(self,input_shape,nb_classes,n_units=500,layers=1):
+        self.model = self.build_model(input_shape,nb_classes,n_units,layers)
         
-    def build_model(self,input_shape,nb_classes):
+    def build_model(self,input_shape,nb_classes,n_units,layers):
         x = keras.layers.Input(input_shape)
         y= keras.layers.Dropout(0.1)(x)
-        y = keras.layers.Dense(500, activation='relu')(x)
-        y = keras.layers.Dropout(0.2)(y)
-        y = keras.layers.Dense(500, activation='relu')(y)
-        y = keras.layers.Dropout(0.2)(y)
-        y = keras.layers.Dense(500, activation = 'relu')(y)
-        y = keras.layers.Dropout(0.3)(y)
+        for i in range(layers):
+            if i==0:
+                y = keras.layers.Dense(n_units, activation='relu')(x)
+            else:
+                y = keras.layers.Dense(n_units, activation='relu')(y)
+            y = keras.layers.Dropout(0.2)(y)
+        
         
         out = keras.layers.Dense(nb_classes, activation='softmax')(y)
         model = keras.models.Model(inputs=[x], outputs=[out])

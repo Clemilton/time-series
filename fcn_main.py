@@ -19,8 +19,7 @@ filewriter = csv.writer(csvfile, delimiter=',',
 filewriter.writerow(['Name', 'Acc1','Acc2','Acc3','Acc4','Acc5','Acc6','Acc7','Acc8','Acc9','Acc10','Avg'])
 flist.sort()
 flist = flist[76:]
-print(flist)
-exit()
+flist=['StarLightCurves']
 for fname in flist:
     scores=[]
     x_train , x_test, y_train, y_test = train_test_splitUCR(fdir,fname)
@@ -53,4 +52,4 @@ for fname in flist:
 csvfile.close()
 
 nameNetwork='fcn'
-s.sendemail("clemilton.ufam@gmail.com","Treino "+nameNetwork,"Terminou!!")
+#s.sendemail("clemilton.ufam@gmail.com","Treino "+nameNetwork,"Terminou!!")
